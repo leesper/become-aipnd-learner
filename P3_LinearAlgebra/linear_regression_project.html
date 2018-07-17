@@ -11817,7 +11817,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># 这个项目设计来帮你熟悉 python list 和线性代数</span>
@@ -11839,10 +11839,10 @@ div#notebook {
      <span class="p">[</span><span class="mi">3</span><span class="p">]]</span>
 
 <span class="c1">#TODO 创建一个 4*4 单位矩阵</span>
-<span class="n">I</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
-    <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span>
-    <span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">],</span>
-    <span class="p">[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">15</span><span class="p">]]</span>
+<span class="n">I</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span>
 </pre></div>
 
 </div>
@@ -12701,10 +12701,9 @@ OK
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>TODO 证明：
-因为I为单位阵，Z为全0矩阵，Y的第一列全0，那么矩阵A对角线以下一定全0，且对角线上存在0</p>
-<p>这说明矩阵A为一个三角矩阵（triangular matrix)</p>
-<p>根据《线性代数及其应用》第三章行列式，定理2：若A为三角矩阵，则A的行列式为主对角线上元素乘积。</p>
-<p>得到detA = 0，矩阵A行列式为0，进一步说明A不可逆，根据定义，A为奇异矩阵。</p>
+很显然，方阵A为分块上三角矩阵，根据分块上三角矩阵行列式的性质，有$detA = detI detY$</p>
+<p>因为$detI = 1$，又因为矩阵Y第一列全为0，根据计算行列式的余因子展开式（cofactor expansion）可知，$detY = 0$</p>
+<p>所以$detA = 0$，矩阵A行列式为0，进一步说明A不可逆，根据定义，A为奇异矩阵。</p>
 
 </div>
 </div>
