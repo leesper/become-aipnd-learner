@@ -37,7 +37,7 @@
 # 
 # 提示：记得使用 notebook 中的魔法指令 `%matplotlib inline`，否则会导致你接下来无法打印出图像。
 
-# In[123]:
+# In[1]:
 
 
 import numpy as np
@@ -47,7 +47,7 @@ import seaborn as sns
 get_ipython().run_line_magic('matplotlib', 'inline')
 
 
-# In[124]:
+# In[2]:
 
 
 movie_data = pd.read_csv('tmdb-movies.csv')
@@ -67,44 +67,44 @@ movie_data = pd.read_csv('tmdb-movies.csv')
 # 
 # 
 
-# In[125]:
+# In[3]:
 
 
 print('movie data is of {} rows and {} columns'.format(*movie_data.shape))
 
 
-# In[126]:
+# In[4]:
 
 
 movie_data.sample()
 
 
-# In[127]:
+# In[5]:
 
 
 movie_data.head()
 
 
-# In[128]:
+# In[6]:
 
 
 movie_data.tail()
 
 
-# In[129]:
+# In[8]:
 
 
 movie_data.dtypes
 
 
-# In[130]:
+# In[9]:
 
 
 print('NaNs in data')
 movie_data.isnull().any()
 
 
-# In[131]:
+# In[10]:
 
 
 movie_data.describe()
@@ -118,14 +118,19 @@ movie_data.describe()
 # 
 # 任务：使用适当的方法来清理空值，并将得到的数据保存。
 
-# In[132]:
+# In[35]:
 
 
 print('missing values of each column')
-movie_data.isnull().sum()
+fields = movie_data.isnull().sum().sort_values(ascending=False)
+missing_fields = fields[fields > 0]
+base_color = sns.color_palette()[0]
+sns.barplot(missing_fields, missing_fields.index.values, color=base_color)
 
 
-# In[133]:
+# 从上图可以看出，homepage字段的缺失值最多，其次是tagline，然后是keywords，homepage和imdb_id对后面的分析用处不大，可以直接删掉这两列，其他可能有用的字段缺失值就统一标记为missing吧。
+
+# In[36]:
 
 
 # homepage缺失项最多，且对后续分析没什么用处，imdb_id也是，直接drop掉这2列
@@ -164,16 +169,22 @@ movie_data_cleaned.isnull().sum()
 # 
 # 要求：每一个语句只能用一行代码实现。
 
-# In[134]:
+# In[37]:
 
 
 movie_data_cleaned[['id', 'popularity', 'budget', 'runtime', 'vote_average']].head()
 
 
-# In[135]:
+# In[38]:
 
 
-movie_data_cleaned.iloc[lambda _: list(range(20)) + [48, 49]]
+movie_data_cleaned.iloc[list(range(20)) + [48, 49]]
+
+
+# In[39]:
+
+
+movie_data_cleaned.iloc[list(range(50, 61))]['popularity']
 
 
 # ---
@@ -187,13 +198,13 @@ movie_data_cleaned.iloc[lambda _: list(range(20)) + [48, 49]]
 # 
 # 要求：请使用 Logical Indexing实现。
 
-# In[136]:
+# In[40]:
 
 
 movie_data_cleaned[movie_data_cleaned['popularity'] > 5]
 
 
-# In[137]:
+# In[41]:
 
 
 movie_data_cleaned[(movie_data_cleaned['popularity'] > 5) & (movie_data_cleaned['release_year'] > 1996)]
@@ -208,13 +219,13 @@ movie_data_cleaned[(movie_data_cleaned['popularity'] > 5) & (movie_data_cleaned[
 # 
 # 要求：使用 `Groupby` 命令实现。
 
-# In[138]:
+# In[42]:
 
 
 movie_data_cleaned.groupby('release_year')['revenue'].agg(['mean'])
 
 
-# In[139]:
+# In[43]:
 
 
 movie_data_cleaned.groupby('director')['popularity'].agg('mean').sort_values(ascending=False)
@@ -239,67 +250,100 @@ movie_data_cleaned.groupby('director')['popularity'].agg('mean').sort_values(asc
 
 # **任务3.1：**对 `popularity` 最高的20名电影绘制其 `popularity` 值。
 
-# In[140]:
+# In[45]:
 
 
 movies_top_20_pop = movie_data_cleaned.sort_values(by=['popularity'], ascending=False).head(20)
-bin_edges = np.arange(0, movies_top_20_pop['popularity'].max()+1, 2)
-plt.hist(data=movies_top_20_pop, x='popularity', bins=bin_edges)
+base_color = sns.color_palette()[0]
+sns.barplot(data=movies_top_20_pop, x='popularity', y='original_title', color=base_color)
+plt.xlabel('Popularity')
+plt.ylabel('Title');
 
+
+# 这里采用的是条形图来展示流行度最高的前20名电影，因为电影标题属于称名量表（nominal）而非顺序量表（ordinal），因此这里按流行度进行排序，最流行的是《侏罗纪世界》，其次是《疯狂的Max》，第三名则是《星级穿越》。
 
 # ---
 # **任务3.2：**分析电影净利润（票房-成本）随着年份变化的情况，并简单进行分析。
 
-# In[141]:
+# In[79]:
 
 
 movie_data_cleaned['net_profit'] = movie_data_cleaned['revenue'] - movie_data_cleaned['budget']
+cnt_movies_by_year = movie_data_cleaned['original_title'].groupby(movie_data_cleaned['release_year']).count()
+cnt_movies_by_year.plot()
+plt.xlabel('Year')
+plt.ylabel('Movies Released');
+
+
+# In[80]:
+
+
+cnt_movies_by_year = movie_data_cleaned['net_profit'].groupby(movie_data_cleaned['release_year']).sum()
+cnt_movies_by_year.plot()
+plt.xlabel('Year')
+plt.ylabel('Total Profit');
+
+
+# In[82]:
+
+
 net_profit_by_year = movie_data_cleaned.groupby(['release_year'])['net_profit'].agg('mean')
 net_profit_by_year.plot(kind='line')
+plt.xlabel('Year')
+plt.ylabel('Avg Profit');
 
 
-# 从净利润随年份变化的折线图上可以看到，净利润虽然在某些年份上会有回落，但总体上呈曲折上升的趋势。在1977年左右突然达到了一个最高值。
+# 电影的发行量和总利润每年是逐步升高的，特别是2000年以后增长很快；再结合平均利润来看，某些年份会有回落，如果某一年电影发行量比较少的, 那么每部电影对平均利润的影响会更大；如果某一年电影发行量较多, 每部电影对平均利润的影响就会更少。
 
 # ---
 # 
 # **[选做]任务3.3：**选择最多产的10位导演（电影数量最多的），绘制他们排行前3的三部电影的票房情况，并简要进行分析。
 
-# In[142]:
-
-
-def plot_top_3_movies(df):
-    plt.figure(figsize=(16, 40))
-    directors = list(set(df['director']))
-    for index, director in enumerate(directors):
-        plt.subplot(10, 1, index+1)
-        data = df[df['director'] == director]
-        plt.bar(x=data['original_title'], height=data['revenue'])
-        plt.ylabel(director)
-
-
 # In[143]:
 
 
-directors_top_10 = movie_data_cleaned.groupby(['director'], as_index=False).count().sort_values(by=['original_title'], ascending=False)['director'].head(10)
-movies_by_top_10_directors = movie_data_cleaned[movie_data_cleaned['director'].isin(directors_top_10)][['revenue', 'original_title', 'director']]
-movies_by_top_3_revenues = movies_by_top_10_directors.sort_values(by=['revenue'], ascending=False).groupby(['director']).head(3)
-plot_top_3_movies(movies_by_top_3_revenues)
+movie_data_split = movie_data_cleaned['director'].str.split('|', expand=True).stack().reset_index(level=0).set_index('level_0').rename(columns={0:'director'}).join(movie_data_cleaned[['revenue', 'original_title']])
+
+top_10_directors = movie_data_split['original_title'].groupby(movie_data_split['director']).count().sort_values(ascending=False)[:10].index
+
+top_director_movies = movie_data_split[movie_data_split['director'].isin(top_10_directors)]
+top_3_movies = top_director_movies.sort_values(by='revenue', ascending=False).groupby(['director']).head(3)
 
 
-# 最多产的10位导演中，各自票房排前3的电影票房之间的差距还是比较大的，只有斯皮尔伯格导演的电影和韦斯·克拉文的《惊声尖叫》3部曲做到了每部电影票房都很高。
+# In[158]:
+
+
+def plot_top_3_movies(data, directors):
+    plt.figure(figsize=(20, 40))
+    for index, director in enumerate(directors):
+        plt.subplot(len(directors), 1, index+1)
+        dd = data[data['director'] == director]
+        plt.bar(x=dd['original_title'], height=dd['revenue'])
+        plt.ylabel(director)
+
+
+# In[160]:
+
+
+plot_top_3_movies(top_3_movies, top_10_directors.values)
+
+
+# 最多产的10位导演中，前三甲分别是Woody Allen，Clint Eastwood和Steven Spielberg。大部分导演排前3的电影票房差距还是比较大的，名次越靠前，所执导的电影票房收入越高。
 
 # ---
 # 
 # **[选做]任务3.4：**分析1968年~2015年六月电影的数量的变化。
 
-# In[144]:
+# In[170]:
 
 
 after1968 = movie_data_cleaned['release_year'] >= 1968
 before2015 = movie_data_cleaned['release_year'] <= 2015
 inJune = movie_data_cleaned['release_date'].str.startswith('6/')
 movies_in_year = movie_data_cleaned[(after1968) & (before2015) & (inJune)]
-movies_in_year.groupby(['release_year'])['original_title'].count().plot(kind='bar')
+# movies_in_year.groupby(['release_year'])['original_title'].count().plot(kind='bar')
+plt.figure(figsize=(10, 8))
+sns.countplot(data=movies_in_year, y='release_year', color=base_color)
 
 
 # 从图像上看，1968年到2015年以来，每年6月发行的电影量总体趋势上是呈上升趋势的，上世纪90年代有小幅回落，千禧年之后又有较大规模增长。
@@ -308,15 +352,28 @@ movies_in_year.groupby(['release_year'])['original_title'].count().plot(kind='ba
 # 
 # **[选做]任务3.5：**分析1968年~2015年六月电影 `Comedy` 和 `Drama` 两类电影的数量的变化。
 
-# In[145]:
+# In[175]:
 
 
 comedy = movies_in_year['genres'].str.contains('Comedy')
 drama = movies_in_year['genres'].str.contains('Drama')
-movies_drama_comedy = movies_in_year[comedy | drama]
-movies_drama_comedy.groupby(['release_year'])['original_title'].count().plot(kind='bar')
+movies_drama = movies_in_year[drama]
+movies_comedy = movies_in_year[comedy]
+plt.figure(figsize=(10, 8))
+sns.countplot(data=movies_comedy, y='release_year', color=base_color)
+plt.xlabel('Comedy Movies');
 
 
-# 1968年到2015年六月电影中Comedy和Drama两类电影数量总体上呈上升趋势的，仍然在上世纪90年代有小幅回落，但千禧年后又有较大发展。
+# 1968年到2015年期间每年6月喜剧电影发行量总体呈上升趋势，20世纪80年代有过一次小规模的爆发，到了2000年以后，喜剧电影发行量每年6月都超过了10部。
+
+# In[176]:
+
+
+plt.figure(figsize=(10, 8))
+sns.countplot(data=movies_drama, y='release_year', color=base_color)
+plt.xlabel('Drama Movies');
+
+
+# 1968年到2015年期间每年6月发行的戏剧总体也是呈上升趋势的，从1999年以后戏剧在每年6月发行量有较大增长，大部分都超过了10部。
 
 # > 注意: 当你写完了所有的代码，并且回答了所有的问题。你就可以把你的 iPython Notebook 导出成 HTML 文件。你可以在菜单栏，这样导出**File -> Download as -> HTML (.html)、Python (.py)** 把导出的 HTML、python文件 和这个 iPython notebook 一起提交给审阅者。
