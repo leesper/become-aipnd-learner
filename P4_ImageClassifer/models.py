@@ -74,8 +74,9 @@ def train_model(model, dataloaders, dataset_sizes, device, criterion, optimizer,
                 inputs = Variable(inputs)
                 labels = Variable(labels)
                 
-                inputs = inputs.to(device)
-                labels = labels.to(device)
+                if device:
+                    inputs = inputs.to(device)
+                    labels = labels.to(device)
                 
                 optimizer.zero_grad()
                 
@@ -116,8 +117,9 @@ def test_model(model, criterion, dataloaders, device, dataset_sizes):
         inputs = Variable(inputs)
         labels = Variable(labels)
                 
-        inputs = inputs.to(device)
-        labels = labels.to(device)
+        if device:
+            inputs = inputs.to(device)
+            labels = labels.to(device)
                 
         with torch.set_grad_enabled(False):
             outputs = model(inputs)

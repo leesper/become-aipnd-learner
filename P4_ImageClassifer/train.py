@@ -74,18 +74,18 @@ elif args.arch == 'resnet50':
     model = models.Resnet50FineTune(hidden_units, 
     len(image_datasets['train'].classes))
 
-if args.gpu:
+if gpu:
     model.cuda()
 
 criterion = CrossEntropyLoss()
 optimizer = optim.SGD(model.classifier.parameters(), lr=learning_rate, momentum=0.9)
 print('training model {}'.format(arch))
 model = models.train_model(model, dataloaders, dataset_sizes, 
-    device, criterion, optimizer, epochs)
+    device if gpu else None, criterion, optimizer, epochs)
 
 print('{} on test set'.format(arch))
 
-models.test_model(model, criterion, dataloaders, device, dataset_sizes)
+models.test_model(model, criterion, dataloaders, device if gpu else None, dataset_sizes)
 
 checkpoint = {
     arch: model.state_dict(),
