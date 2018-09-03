@@ -7,10 +7,10 @@ from torchvision import models
 from PIL import Image
 import numpy as np
 
+vgg19 = models.vgg19(pretrained=True)
 class VGG19Original(nn.Module):
     def __init__(self):
         super(VGG19Original, self).__init__()
-        vgg19 = models.vgg19(pretrained=True)
         self.features = vgg19.features
         for param in self.parameters():
             param.requires_grad = False
