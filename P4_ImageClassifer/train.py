@@ -10,15 +10,15 @@ import torch.optim as optim
 parser = argparse.ArgumentParser(description='Train new network')
 parser.add_argument('data_directory', nargs=1, 
     help='a directory of training images')
-parser.add_argument('--save_dir', default='.', nargs=1, 
+parser.add_argument('--save_dir', default=['.'], nargs=1, 
     help='a directory to save checkpoint')
-parser.add_argument('--arch', default='vgg19', nargs=1, 
+parser.add_argument('--arch', default=['vgg19'], nargs=1, 
     help='network architecture(vgg19, resnet50, densenet121 supported)')
-parser.add_argument('--learning_rate', default=0.001, nargs=1, type=float, 
+parser.add_argument('--learning_rate', default=[0.001], nargs=1, type=float, 
     help='hyper parameter: learning rate')
 parser.add_argument('--hidden_units', default=[512], nargs=1, type=int, 
     help='hypter parameter: hidden units')
-parser.add_argument('--epochs', default=20, nargs=1, type=int, 
+parser.add_argument('--epochs', default=[20], nargs=1, type=int, 
     help='hyper parameter: epochs')
 parser.add_argument('--gpu', action='store_true', 
     help='train model in GPU mode')
@@ -27,10 +27,10 @@ args = parser.parse_args()
 
 data_directory = args.data_directory[0]
 save_dir = args.save_dir[0]
-arch = args.arch
+arch = args.arch[0]
 learning_rate = args.learning_rate[0]
 hidden_units = args.hidden_units[0]
-epochs = args.epochs
+epochs = args.epochs[0]
 gpu = args.gpu
 
 # print(data_directory, save_dir, arch, learning_rate, hidden_units, epochs, gpu)
