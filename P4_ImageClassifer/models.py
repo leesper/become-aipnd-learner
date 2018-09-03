@@ -45,7 +45,7 @@ class Resnet50FineTune(nn.Module):
             nn.ReLU(inplace=True),
             nn.Dropout(p=0.5),
             nn.Linear(in_features=hidden_units, out_features=classes),
-            nn.Softmax(dim=None),
+            nn.Softmax(dim=1),
         )
     def forward(self, x):
         x = self.features(x)
