@@ -21,7 +21,7 @@ class VGG19FineTune(nn.Module):
             nn.Linear(in_features=4096, out_features=hidden_units, bias=True),
             nn.ReLU(inplace=True),
             nn.Dropout(p=0.5),
-            nn.Linear(in_features=hidden_units, out_features=classes),
+            nn.Linear(in_features=hidden_units, out_features=classes, bias=True),
         )
     def forward(self, x):
         x = self.features(x)
@@ -44,7 +44,7 @@ class Resnet50FineTune(nn.Module):
             nn.Linear(in_features=1024, out_features=hidden_units, bias=True),
             nn.ReLU(inplace=True),
             nn.Dropout(p=0.5),
-            nn.Linear(in_features=hidden_units, out_features=classes),
+            nn.Linear(in_features=hidden_units, out_features=classes, bias=True),
         )
     def forward(self, x):
         x = self.features(x)
