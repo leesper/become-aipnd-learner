@@ -47,7 +47,7 @@ data_transforms = {
         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])]),
 }
 
-image_datasets = {x: datasets.ImageFolder(os.path.join(args.data_directory, x), 
+image_datasets = {x: datasets.ImageFolder(os.path.join(args.data_directory[0], x), 
     data_transforms[x]) for x in ['train', 'valid', 'test']}
 
 dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=64, shuffle=True) 
