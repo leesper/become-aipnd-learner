@@ -27,7 +27,7 @@ args = parser.parse_args()
 
 data_directory = args.data_directory[0]
 save_dir = args.save_dir[0]
-arch = args.arch[0]
+arch = args.arch
 learning_rate = args.learning_rate
 hidden_units = args.hidden_units[0]
 epochs = args.epochs
@@ -78,8 +78,8 @@ if args.gpu:
     model.cuda()
 
 criterion = CrossEntropyLoss()
-optimizer = optim.SGD(model.classifer.parameters(), lr=learning_rate, momentum=0.9)
-print('training model {}'.format(args.arch))
+optimizer = optim.SGD(model.classifier.parameters(), lr=learning_rate, momentum=0.9)
+print('training model {}'.format(arch))
 model = models.train_model(model, dataloaders, dataset_sizes, 
     device, criterion, optimizer, epochs)
 
