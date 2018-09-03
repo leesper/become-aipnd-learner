@@ -22,7 +22,7 @@ class VGG19FineTune(nn.Module):
             nn.ReLU(inplace=True),
             nn.Dropout(p=0.5),
             nn.Linear(in_features=hidden_units, out_features=classes),
-            nn.Softmax(),
+            nn.Softmax(dim=None),
         )
     def forward(self, x):
         x = self.features(x)
@@ -45,7 +45,7 @@ class Resnet50FineTune(nn.Module):
             nn.ReLU(inplace=True),
             nn.Dropout(p=0.5),
             nn.Linear(in_features=hidden_units, out_features=classes),
-            nn.Softmax(),
+            nn.Softmax(dim=None),
         )
     def forward(self, x):
         x = self.features(x)
