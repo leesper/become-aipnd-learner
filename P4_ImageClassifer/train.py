@@ -67,10 +67,10 @@ dataset_sizes = {x: len(image_datasets[x]) for x in ['train', 'valid', 'test']}
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 model = None
-if args.arch == 'vgg19':
+if arch == 'vgg19':
     model = models.VGG19FineTune(hidden_units, 
     len(image_datasets['train'].classes))
-elif args.arch == 'resnet50':
+elif arch == 'resnet50':
     model = models.Resnet50FineTune(hidden_units, 
     len(image_datasets['train'].classes))
 
