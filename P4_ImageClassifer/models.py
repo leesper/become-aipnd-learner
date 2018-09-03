@@ -22,12 +22,12 @@ class VGG19FineTune(nn.Module):
             nn.ReLU(inplace=True),
             nn.Dropout(p=0.5),
             nn.Linear(in_features=hidden_units, out_features=classes),
-            nn.Softmax(dim=None),
         )
     def forward(self, x):
         x = self.features(x)
         x = x.view(x.size(0), -1)
         x = self.classifier(x)
+        x = F.softmax(x)
         return x
 
 class Resnet50FineTune(nn.Module):
@@ -45,12 +45,12 @@ class Resnet50FineTune(nn.Module):
             nn.ReLU(inplace=True),
             nn.Dropout(p=0.5),
             nn.Linear(in_features=hidden_units, out_features=classes),
-            nn.Softmax(dim=1),
         )
     def forward(self, x):
         x = self.features(x)
         x = x.view(x.size(0), -1)
         x = self.classifier(x)
+        x = F.softmax(x)
         return x
 
 def train_model(model, dataloaders, dataset_sizes, device, criterion, optimizer, num_epochs=25):
