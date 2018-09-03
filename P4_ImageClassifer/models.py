@@ -15,13 +15,13 @@ class VGG19Original(nn.Module):
         for param in self.parameters():
             param.requires_grad = False
         # only change classifer layer
-        self.classifers = nn.Sequential(
+        self.classifier = nn.Sequential(
             *list(vgg19.classifier.children())[:-1], 
             nn.Linear(in_features=4096, out_features=102, bias=True))
     def forward(self, x):
         x = self.features(x)
         x = x.view(x.size(0), -1)
-        x = self.classifers(x)
+        x = self.classifier(x)
         x = F.softmax(x, dim=1)
         return x
 
