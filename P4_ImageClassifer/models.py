@@ -7,6 +7,24 @@ from torchvision import models
 from PIL import Image
 import numpy as np
 
+class VGG19Original(nn.Module):
+    def __init__(self):
+        super(VGG19Original, self).__init__()
+        vgg19 = models.vgg19(pretrained=True)
+        self.features = vgg19.features
+        for param in self.parameters():
+            param.requires_grad = False
+        # only change classifer layer
+        self.classifers = nn.Sequential(
+            *list(vgg19.classifier.children())[:-1], 
+            nn.Linear(in_features=4096, out_features=102, bias=True))
+    def forward(self, x):
+        x = self.features(x)
+        x = x.view(x.size(0), -1)
+        x = self.classifers(x)
+        x = F.softmax(x, dim=1)
+        return x
+
 class VGG19FineTune(nn.Module):
     def __init__(self, hidden_units, classes):
         super(VGG19FineTune, self).__init__()
