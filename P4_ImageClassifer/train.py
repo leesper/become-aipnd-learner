@@ -73,9 +73,8 @@ device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 model = None
 if arch == 'vgg19':
-    # model = models.VGG19FineTune(hidden_units, 
-    # len(image_datasets['train'].classes))
-    model = models.VGG19Original()
+    model = models.VGG19FineTune(hidden_units, 
+    len(image_datasets['train'].classes))
 elif arch == 'resnet50':
     model = models.Resnet50FineTune(hidden_units, 
     len(image_datasets['train'].classes))
