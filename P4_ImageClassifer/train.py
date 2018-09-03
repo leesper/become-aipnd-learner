@@ -33,7 +33,12 @@ hidden_units = args.hidden_units[0]
 epochs = args.epochs[0]
 gpu = args.gpu
 
-# print(data_directory, save_dir, arch, learning_rate, hidden_units, epochs, gpu)
+print('save to {}'.format(save_dir))
+print('training data {}'.format(data_directory))
+print('learning rate: {}'.format(learning_rate))
+print('hidden units: {}'.format(hidden_units))
+print('epochs: {}'.format(epochs))
+print('training on GPU: {}'.format(gpu))
 
 supported_archs = ['vgg19', 'resnet50']
 
