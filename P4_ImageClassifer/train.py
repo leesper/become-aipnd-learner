@@ -76,12 +76,12 @@ dataset_sizes = {x: len(image_datasets[x]) for x in ['train', 'valid', 'test']}
 model = None
 if arch == 'vgg19':
     # model = models.VGG19FineTune(hidden_units, len(image_datasets['train'].classes))
-    model = models.resnet50(pretrained=True)
+    model = models.vgg19(pretrained=True)
     num_features = model.classifier[0].in_features
 elif arch == 'resnet50':
     # model = models.Resnet50FineTune(hidden_units, len(image_datasets['train'].classes))
     model = models.resnet50(pretrained=True)
-    num_features = model.classifier.in_features
+    num_features = model.fc.in_features
 
 for param in model.parameters():
     param.require_grad = False
