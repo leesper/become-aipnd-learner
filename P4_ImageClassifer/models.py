@@ -46,10 +46,12 @@ class Resnet50FineTune(nn.Module):
         x = F.softmax(x, dim=1)
         return x
 
-def train_model(model, dataloaders, dataset_sizes, device, criterion, optimizer, num_epochs=25):
+def train_model(model, dataloaders, dataset_sizes, gpu, criterion, optimizer, num_epochs=25):
     best_model_weights = copy.deepcopy(model.state_dict())
     best_acc = 0.0
     
+    if gpu:
+        model.cuda()
     for epoch in range(num_epochs):
         print('epoch {}/{}'.format(epoch, num_epochs-1))
         print('-' * 10)
@@ -67,9 +69,8 @@ def train_model(model, dataloaders, dataset_sizes, device, criterion, optimizer,
                 inputs = Variable(inputs)
                 labels = Variable(labels)
                 
-                if device:
-                    inputs = inputs.to(device)
-                    labels = labels.to(device)
+                if gpu:
+                    inputs, labels = inputs.cuda(), labels.cuda()
                 
                 optimizer.zero_grad()
                 
@@ -100,7 +101,7 @@ def train_model(model, dataloaders, dataset_sizes, device, criterion, optimizer,
     model.load_state_dict(best_model_weights)
     return model
 
-def test_model(model, criterion, dataloaders, device, dataset_sizes):
+def test_model(model, criterion, dataloaders, gpu, dataset_sizes):
     model.eval()
     
     running_loss = 0.0
@@ -110,9 +111,8 @@ def test_model(model, criterion, dataloaders, device, dataset_sizes):
         inputs = Variable(inputs)
         labels = Variable(labels)
                 
-        if device:
-            inputs = inputs.to(device)
-            labels = labels.to(device)
+        if gpu:
+            inputs, labels = inputs.cuda(), labels.cuda()
                 
         with torch.set_grad_enabled(False):
             outputs = model(inputs)

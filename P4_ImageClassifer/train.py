@@ -69,7 +69,6 @@ dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=32, 
                for x in ['train', 'valid', 'test']}
 
 dataset_sizes = {x: len(image_datasets[x]) for x in ['train', 'valid', 'test']}
-device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 model = None
 if arch == 'vgg19':
@@ -79,18 +78,14 @@ elif arch == 'resnet50':
     model = models.Resnet50FineTune(hidden_units, 
     len(image_datasets['train'].classes))
 
-if gpu:
-    model.cuda()
-
 criterion = CrossEntropyLoss()
 optimizer = optim.SGD(model.classifier.parameters(), lr=learning_rate, momentum=0.9)
 print('training model {}'.format(arch))
-model = models.train_model(model, dataloaders, dataset_sizes, 
-    device if gpu else None, criterion, optimizer, epochs)
+model = models.train_model(model, dataloaders, dataset_sizes, gpu, criterion, optimizer, epochs)
 
 print('{} on test set'.format(arch))
 
-models.test_model(model, criterion, dataloaders, device if gpu else None, dataset_sizes)
+models.test_model(model, criterion, dataloaders, gpu, dataset_sizes)
 
 checkpoint = {
     arch: model.state_dict(),
