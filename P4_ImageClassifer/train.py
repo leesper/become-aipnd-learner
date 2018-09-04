@@ -19,7 +19,7 @@ parser.add_argument('--arch', default=['vgg19'], nargs=1,
     help='network architecture(vgg19, resnet50, densenet121 supported)')
 parser.add_argument('--learning_rate', default=[0.001], nargs=1, type=float, 
     help='hyper parameter: learning rate')
-parser.add_argument('--hidden_units', default=[4096], nargs=1, type=int, 
+parser.add_argument('--hidden_units', default=[500], nargs=1, type=int, 
     help='hypter parameter: hidden units')
 parser.add_argument('--epochs', default=[20], nargs=1, type=int, 
     help='hyper parameter: epochs')
@@ -75,11 +75,11 @@ dataset_sizes = {x: len(image_datasets[x]) for x in ['train', 'valid', 'test']}
 
 model = None
 if arch == 'vgg19':
-    # model = models.VGG19FineTune(hidden_units, len(image_datasets['train'].classes))
+    # model = common.VGG19FineTune(hidden_units, len(image_datasets['train'].classes))
     model = models.vgg19(pretrained=True)
     num_features = model.classifier[0].in_features
 elif arch == 'resnet50':
-    # model = models.Resnet50FineTune(hidden_units, len(image_datasets['train'].classes))
+    # model = common.Resnet50FineTune(hidden_units, len(image_datasets['train'].classes))
     model = models.resnet50(pretrained=True)
     num_features = model.fc.in_features
 
