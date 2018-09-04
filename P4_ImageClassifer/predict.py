@@ -11,7 +11,7 @@ parser.add_argument('--top_k', default=[5], type=int,
     help='top K classes')
 parser.add_argument('--category_names', default=['cat_to_name.json'], 
     help='classes to real name')
-parser.add_argument('--gpu', action='store_false', 
+parser.add_argument('--gpu', action='store_true', 
     help='predict in GPU model')
 
 args = parser.parse_args()

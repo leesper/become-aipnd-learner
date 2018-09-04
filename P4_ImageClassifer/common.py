@@ -185,9 +185,11 @@ def predict(image_path, model, class_to_idx, is_gpu, topk=5):
     im = Image.open(image_path)
     im = process_image(im)
     im = im.view(1, *im.shape)
+    im = Variable(im)
     model.eval()
-    if is_gpu:
+    if is_gpu and torch.cuda.is_available():
         model.cuda()
+        im.cuda()
     output = model(im.float())
     output = F.softmax(output)
     idx_to_class = {v: k for k, v in class_to_idx.items()}
