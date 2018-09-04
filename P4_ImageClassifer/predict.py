@@ -17,7 +17,7 @@ parser.add_argument('--gpu', action='store_false',
 args = parser.parse_args()
 
 images = args.images
-checkpoint = args.checkpoint
+checkpoint = args.checkpoint[0]
 top_k = args.top_k[0]
 category_names = args.category_names[0]
 gpu = args.gpu
