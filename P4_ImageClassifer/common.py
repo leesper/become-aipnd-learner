@@ -191,7 +191,7 @@ def predict(image_path, model, class_to_idx, is_gpu, topk=5):
         model.cuda()
         im.cuda()
     output = model(im.float())
-    output = F.softmax(output)
+    output = F.softmax(output, dim=1)
     idx_to_class = {v: k for k, v in class_to_idx.items()}
     probs, indices = output.topk(topk)
     indices = indices[0]
