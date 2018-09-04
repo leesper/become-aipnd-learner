@@ -6,6 +6,8 @@ from torchvision import transforms, datasets
 import models
 from torch.nn import CrossEntropyLoss
 import torch.optim as optim
+from collections import OrderedDict
+import torch.nn as nn
 
 parser = argparse.ArgumentParser(description='Train new network')
 parser.add_argument('data_directory', nargs=1, 
@@ -72,11 +74,29 @@ dataset_sizes = {x: len(image_datasets[x]) for x in ['train', 'valid', 'test']}
 
 model = None
 if arch == 'vgg19':
-    model = models.VGG19FineTune(hidden_units, 
-    len(image_datasets['train'].classes))
+    # model = models.VGG19FineTune(hidden_units, len(image_datasets['train'].classes))
+    model = models.resnet50(pretrained=True)
+    num_features = model.classifier[0].in_features
 elif arch == 'resnet50':
-    model = models.Resnet50FineTune(hidden_units, 
-    len(image_datasets['train'].classes))
+    # model = models.Resnet50FineTune(hidden_units, len(image_datasets['train'].classes))
+    model = models.resnet50(pretrained=True)
+    num_features = model.classifier.in_features
+
+for param in model.parameters():
+    param.require_grad = False
+
+classifier = nn.Sequential(OrderedDict([
+    ('fc1', nn.Linear(num_features, 2000, bias=True)),
+    ('relu', nn.ReLU()),
+    ('dropout', nn.Dropout(p=0.5)),
+    ('fc2', nn.Linear(2000, hidden_units)),
+    ('relu', nn.ReLU()),
+    ('dropout', nn.Dropout(p=0.5)),
+    ('fc3', nn.Linear(hidden_units, 102)),
+    ('output', nn.Softmax(dim=1))
+]))
+
+model.classifier = classifier
 
 criterion = CrossEntropyLoss()
 optimizer = optim.SGD(model.classifier.parameters(), lr=learning_rate, momentum=0.9)
