@@ -146,13 +146,13 @@ def test_model(model, criterion, dataloaders, gpu, dataset_sizes):
 def rebuild_model(checkpoint_file):
     checkpoint = torch.load(checkpoint_file)
     model = None
-    if checkpoint_file.startswith('vgg19'):
+    if 'vgg19' in checkpoint_file:
         model = VGG19FineTune(checkpoint['hidden_units'])
         model.load_state_dict(checkpoint['vgg19'])
-    elif checkpoint_file.startswith('resnet50'):
+    elif 'resnet50' in checkpoint_file:
         model = Resnet50FineTune(checkpoint['hidden_units'])
         model.load_state_dict(checkpoint['resnet50'])
-    elif checkpoint_file.startswith('densenet121'):
+    elif 'densenet121' in checkpoint_file:
         model = Densenet121FineTune(checkpoint['hidden_units'])
         model.load_state_dict(checkpoint['densenet121'])
     class_to_idx = checkpoint['class_to_idx']
