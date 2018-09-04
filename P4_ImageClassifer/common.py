@@ -61,7 +61,7 @@ class Densenet121FineTune(nn.Module):
         out = self.classifier(out)
         return out
 
-def train_model(model, dataloaders, dataset_sizes, gpu, device, criterion, optimizer, num_epochs=25):
+def train_model(model, dataloaders, dataset_sizes, gpu, criterion, optimizer, num_epochs=25):
     best_model_weights = copy.deepcopy(model.state_dict())
     best_acc = 0.0
     
@@ -116,7 +116,7 @@ def train_model(model, dataloaders, dataset_sizes, gpu, device, criterion, optim
     model.load_state_dict(best_model_weights)
     return model
 
-def test_model(model, criterion, dataloaders, gpu, device, dataset_sizes):
+def test_model(model, criterion, dataloaders, gpu, dataset_sizes):
     if gpu and torch.cuda.is_available():
         model.cuda()
 
