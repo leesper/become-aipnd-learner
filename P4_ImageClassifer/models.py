@@ -15,10 +15,10 @@ class VGG19FineTune(nn.Module):
         for param in self.parameters():
             param.require_grad = False
         self.classifier = nn.Sequential(
-            nn.Linear(in_features=25088, out_features=4096, bias=True),
+            nn.Linear(in_features=25088, out_features=hidden_units, bias=True),
             nn.ReLU(inplace=True),
             nn.Dropout(p=0.5),
-            nn.Linear(in_features=4096, out_features=hidden_units, bias=True),
+            nn.Linear(in_features=hidden_units, out_features=hidden_units, bias=True),
             nn.ReLU(inplace=True),
             nn.Dropout(p=0.5),
             nn.Linear(in_features=hidden_units, out_features=classes, bias=True),
@@ -38,14 +38,7 @@ class Resnet50FineTune(nn.Module):
         for param in self.parameters():
             param.require_grad = False
         self.classifier = nn.Sequential(
-            nn.Linear(in_features=2048, out_features=1024, bias=True),
-            nn.ReLU(inplace=True),
-            nn.Dropout(p=0.5),
-            nn.Linear(in_features=1024, out_features=hidden_units, bias=True),
-            nn.ReLU(inplace=True),
-            nn.Dropout(p=0.5),
-            nn.Linear(in_features=hidden_units, out_features=classes, bias=True),
-        )
+            nn.Linear(in_features=2048, out_features=102, bias=True))
     def forward(self, x):
         x = self.features(x)
         x = x.view(x.size(0), -1)

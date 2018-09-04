@@ -16,7 +16,7 @@ parser.add_argument('--arch', default=['vgg19'], nargs=1,
     help='network architecture(vgg19, resnet50, densenet121 supported)')
 parser.add_argument('--learning_rate', default=[0.001], nargs=1, type=float, 
     help='hyper parameter: learning rate')
-parser.add_argument('--hidden_units', default=[512], nargs=1, type=int, 
+parser.add_argument('--hidden_units', default=[4096], nargs=1, type=int, 
     help='hypter parameter: hidden units')
 parser.add_argument('--epochs', default=[20], nargs=1, type=int, 
     help='hyper parameter: epochs')
@@ -65,7 +65,7 @@ data_transforms = {
 image_datasets = {x: datasets.ImageFolder(os.path.join(data_directory, x), 
     data_transforms[x]) for x in ['train', 'valid', 'test']}
 
-dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=64, shuffle=True) 
+dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=32, shuffle=True) 
                for x in ['train', 'valid', 'test']}
 
 dataset_sizes = {x: len(image_datasets[x]) for x in ['train', 'valid', 'test']}
