@@ -3,7 +3,8 @@ import sys
 import os
 import torch
 from torchvision import transforms, datasets
-import models
+import common
+import torchvision.models as models
 from torch.nn import CrossEntropyLoss
 import torch.optim as optim
 from collections import OrderedDict
@@ -101,11 +102,11 @@ model.classifier = classifier
 criterion = CrossEntropyLoss()
 optimizer = optim.SGD(model.classifier.parameters(), lr=learning_rate, momentum=0.9)
 print('training model {}'.format(arch))
-model = models.train_model(model, dataloaders, dataset_sizes, gpu, criterion, optimizer, epochs)
+model = common.train_model(model, dataloaders, dataset_sizes, gpu, criterion, optimizer, epochs)
 
 print('{} on test set'.format(arch))
 
-models.test_model(model, criterion, dataloaders, gpu, dataset_sizes)
+common.test_model(model, criterion, dataloaders, gpu, dataset_sizes)
 
 checkpoint = {
     arch: model.state_dict(),
