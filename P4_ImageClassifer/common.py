@@ -27,7 +27,6 @@ class VGG19FineTune(nn.Module):
         x = self.features(x)
         x = x.view(x.size(0), -1)
         x = self.classifier(x)
-        x = F.softmax(x, dim=1)
         return x
 
 resnet50 = models.resnet50(pretrained=True)
@@ -43,7 +42,6 @@ class Resnet50FineTune(nn.Module):
         x = self.features(x)
         x = x.view(x.size(0), -1)
         x = self.classifier(x)
-        x = F.softmax(x, dim=1)
         return x
 
 def train_model(model, dataloaders, dataset_sizes, gpu, criterion, optimizer, num_epochs=25):

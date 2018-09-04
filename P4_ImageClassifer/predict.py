@@ -1,5 +1,5 @@
 import argparse
-import models
+import common
 import json
 
 parser = argparse.ArgumentParser()
@@ -27,13 +27,13 @@ print('TOP K: {}'.format(top_k))
 print('category names: {}'.format(category_names))
 print('training on GPU: {}'.format(gpu))
 
-model, class_to_idx = models.rebuild_model(checkpoint)
+model, class_to_idx = common.rebuild_model(checkpoint)
 
 with open(category_names, 'r') as f:
     cat_to_name = json.load(f)
 
 for image in inputs:
-    values, classes = models.predict(image, model, class_to_idx, gpu, top_k)
+    values, classes = common.predict(image, model, class_to_idx, gpu, top_k)
     flowers = [cat_to_name[cls] for cls in classes]
     for flower, prob in zip(flowers, values):
         print('{} ---> {}'.format(flower, prob))
