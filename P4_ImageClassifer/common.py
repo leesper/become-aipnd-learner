@@ -9,7 +9,7 @@ import numpy as np
 
 vgg19 = models.vgg19(pretrained=True)
 class VGG19FineTune(nn.Module):
-    def __init__(self, hidden_units, classes):
+    def __init__(self, hidden_units):
         super(VGG19FineTune, self).__init__()
         self.features = vgg19.features
         for param in self.parameters():
@@ -21,7 +21,7 @@ class VGG19FineTune(nn.Module):
             nn.Linear(in_features=hidden_units, out_features=hidden_units, bias=True),
             nn.ReLU(inplace=True),
             nn.Dropout(p=0.5),
-            nn.Linear(in_features=hidden_units, out_features=classes, bias=True),
+            nn.Linear(in_features=hidden_units, out_features=102, bias=True),
         )
     def forward(self, x):
         x = self.features(x)
@@ -31,7 +31,7 @@ class VGG19FineTune(nn.Module):
 
 resnet50 = models.resnet50(pretrained=True)
 class Resnet50FineTune(nn.Module):
-    def __init__(self, hidden_units, classes):
+    def __init__(self, hidden_units):
         super(Resnet50FineTune, self).__init__()
         self.features = nn.Sequential(*list(resnet50.children())[:-1])
         for param in self.parameters():
@@ -44,11 +44,28 @@ class Resnet50FineTune(nn.Module):
         x = self.classifier(x)
         return x
 
-def train_model(model, dataloaders, dataset_sizes, gpu, criterion, optimizer, num_epochs=25):
+densenet121 = models.densenet121(pretrained=True)
+class Densenet121FineTune(nn.Module):
+    def __init__(self, hidden_units):
+        super(Densenet121FineTune, self).__init__()
+        self.features = densenet121.features
+        for param in self.parameters():
+            param.require_grad = False
+        # only change classifer layer
+        self.classifier = nn.Linear(in_features=1024, out_features=102, bias=True)
+    def forward(self, x):
+        # copy from Densenet implementation in pytorch/vision
+        features = self.features(x)
+        out = F.relu(features, inplace=True)
+        out = F.avg_pool2d(out, kernel_size=7, stride=1).view(features.size(0), -1)
+        out = self.classifier(out)
+        return out
+
+def train_model(model, dataloaders, dataset_sizes, gpu, device, criterion, optimizer, num_epochs=25):
     best_model_weights = copy.deepcopy(model.state_dict())
     best_acc = 0.0
     
-    if gpu:
+    if gpu and torch.cuda.is_available():
         model.cuda()
     for epoch in range(num_epochs):
         print('epoch {}/{}'.format(epoch, num_epochs-1))
@@ -67,7 +84,7 @@ def train_model(model, dataloaders, dataset_sizes, gpu, criterion, optimizer, nu
                 inputs = Variable(inputs)
                 labels = Variable(labels)
                 
-                if gpu:
+                if gpu and torch.cuda.is_available():
                     inputs, labels = inputs.cuda(), labels.cuda()
                 
                 optimizer.zero_grad()
@@ -99,7 +116,10 @@ def train_model(model, dataloaders, dataset_sizes, gpu, criterion, optimizer, nu
     model.load_state_dict(best_model_weights)
     return model
 
-def test_model(model, criterion, dataloaders, gpu, dataset_sizes):
+def test_model(model, criterion, dataloaders, gpu, device, dataset_sizes):
+    if gpu and torch.cuda.is_available():
+        model.cuda()
+
     model.eval()
     
     running_loss = 0.0
@@ -109,7 +129,7 @@ def test_model(model, criterion, dataloaders, gpu, dataset_sizes):
         inputs = Variable(inputs)
         labels = Variable(labels)
                 
-        if gpu:
+        if gpu and torch.cuda.is_available():
             inputs, labels = inputs.cuda(), labels.cuda()
                 
         with torch.set_grad_enabled(False):

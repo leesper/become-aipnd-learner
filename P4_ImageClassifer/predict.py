@@ -3,7 +3,7 @@ import common
 import json
 
 parser = argparse.ArgumentParser()
-parser.add_argument('input', 
+parser.add_argument('images', nargs='+',
     help='images of flowers')
 parser.add_argument('checkpoint', nargs=1, 
     help='trained checkpoint')
@@ -16,7 +16,7 @@ parser.add_argument('--gpu', action='store_false',
 
 args = parser.parse_args()
 
-inputs = args.input
+images = args.images
 checkpoint = args.checkpoint
 top_k = args.top_k[0]
 category_names = args.category_names[0]
@@ -32,7 +32,7 @@ model, class_to_idx = common.rebuild_model(checkpoint)
 with open(category_names, 'r') as f:
     cat_to_name = json.load(f)
 
-for image in inputs:
+for image in images:
     values, classes = common.predict(image, model, class_to_idx, gpu, top_k)
     flowers = [cat_to_name[cls] for cls in classes]
     for flower, prob in zip(flowers, values):
