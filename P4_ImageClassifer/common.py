@@ -13,7 +13,7 @@ class VGG19FineTune(nn.Module):
         super(VGG19FineTune, self).__init__()
         self.features = vgg19.features
         for param in self.parameters():
-            param.require_grad = False
+            param.requires_grad = False
         self.classifier = nn.Sequential(
             nn.Linear(in_features=25088, out_features=hidden_units, bias=True),
             nn.ReLU(inplace=True),
@@ -35,7 +35,7 @@ class Resnet50FineTune(nn.Module):
         super(Resnet50FineTune, self).__init__()
         self.features = nn.Sequential(*list(resnet50.children())[:-1])
         for param in self.parameters():
-            param.require_grad = False
+            param.requires_grad = False
         self.classifier = nn.Sequential(
             nn.Linear(in_features=2048, out_features=102, bias=True))
     def forward(self, x):
