@@ -197,4 +197,5 @@ def predict(image_path, model, class_to_idx, is_gpu, topk=5):
     probs, indices = output.topk(topk)
     indices = indices[0]
     classes = [idx_to_class[index.item()] for index in indices]
+    probs = probs.cpu()
     return probs.data.numpy()[0], classes
