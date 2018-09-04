@@ -35,5 +35,7 @@ with open(category_names, 'r') as f:
 for image in images:
     values, classes = common.predict(image, model, class_to_idx, gpu, top_k)
     flowers = [cat_to_name[cls] for cls in classes]
+    print('image {}'.format(image))
     for flower, prob in zip(flowers, values):
         print('{} ---> {}'.format(flower, prob))
+    print('-' * 10)
